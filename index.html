@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hassni Ticket Company — Global Flight Search</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="dashboard-wrap">
+    <div class="hdr">
+      <div class="hdr-left">
+        <div class="logo">HTC</div>
+        <div>
+          <div class="hdr-title">Hassni Ticket Company</div>
+          <div class="hdr-sub">Worldwide Flight Search — License LHR 10829</div>
+        </div>
+      </div>
+      <div class="hdr-right">
+        0331-2937642 / 0332-3218300<br>
+        hassniticketcompany@gmail.com
+      </div>
+    </div>
+
+    <!-- SEARCH PANEL -->
+    <div class="search-bar">
+      <div class="trip-tabs">
+        <span class="ttab on" onclick="setTab(this)">One way</span>
+        <span class="ttab" onclick="setTab(this)">Return</span>
+        <span class="ttab" onclick="setTab(this)">Multi-city</span>
+      </div>
+      <div class="search-row">
+
+        <div class="field">
+          <label>From — any city worldwide</label>
+          <div class="ac-wrap" id="wrap-from">
+            <input class="ac-input" id="inp-from"
+              placeholder="City or airport (e.g. Lahore, Dubai...)"
+              autocomplete="off"
+              oninput="onType('from')"
+              onfocus="onFocus('from')"
+              onblur="onBlur('from')">
+            <div class="dropdown" id="dd-from"></div>
+            <div class="ac-hint" id="hint-from">Start typing any city or IATA code</div>
+          </div>
+        </div>
+
+        <div class="field swap-col">
+          <button class="swap-btn" onclick="swapCities()" title="Swap cities">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
+              <path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="field">
+          <label>To — any city worldwide</label>
+          <div class="ac-wrap" id="wrap-to">
+            <input class="ac-input" id="inp-to"
+              placeholder="City or airport (e.g. London, Riyadh...)"
+              autocomplete="off"
+              oninput="onType('to')"
+              onfocus="onFocus('to')"
+              onblur="onBlur('to')">
+            <div class="dropdown" id="dd-to"></div>
+            <div class="ac-hint" id="hint-to">Start typing any city or IATA code</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Departure date</label>
+          <input class="std-input" type="date" id="tdate">
+        </div>
+
+        <div class="field">
+          <label>Passengers</label>
+          <select class="std-select" id="pax">
+            <option>1 Adult</option>
+            <option>2 Adults</option>
+            <option>3 Adults</option>
+            <option>Family 2+2</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Baggage</label>
+          <select class="std-select" id="bag">
+            <option value="any">Any</option>
+            <option value="checked">With checked bag</option>
+            <option value="hand">Hand carry only</option>
+          </select>
+        </div>
+
+        <button class="btn-search" onclick="doSearch()">
+          Search flights
+        </button>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar">
+      <span class="flabel">Sort:</span>
+      <span class="chip on" data-group="sort" onclick="filterChip(this)">Cheapest</span>
+      <span class="chip" data-group="sort" onclick="filterChip(this)">Earliest</span>
+      <span class="chip" data-group="sort" onclick="filterChip(this)">Shortest</span>
+
+      <span class="flabel ml">Stops:</span>
+      <span class="chip on" data-group="stops" onclick="filterChip(this)">All</span>
+      <span class="chip" data-group="stops" onclick="filterChip(this)">Direct only</span>
+      <span class="chip" data-group="stops" onclick="filterChip(this)">1 stop</span>
+
+      <span class="flabel ml">Baggage:</span>
+      <span class="chip on" data-group="bag" onclick="filterChip(this)">Any</span>
+      <span class="chip" data-group="bag" onclick="filterChip(this)">With checked bag</span>
+
+      <span class="flabel ml">Time:</span>
+      <span class="chip on" data-group="time" onclick="filterChip(this)">Any time</span>
+      <span class="chip" data-group="time" onclick="filterChip(this)">Morning</span>
+      <span class="chip" data-group="time" onclick="filterChip(this)">Evening</span>
+      <span class="chip" data-group="time" onclick="filterChip(this)">Night</span>
+    </div>
+
+    <!-- ROUTE BANNER -->
+    <div class="route-banner" id="route-banner" style="display:none;">
+      <span id="route-text"></span>
+      <span class="api-pill">Sample data — connect Amadeus API for live prices</span>
+    </div>
+
+    <!-- TABLE HEADER -->
+    <div class="tbl-head" id="tbl-head" style="display:none;">
+      <div>Airline</div>
+      <div>Dep / Arr</div>
+      <div>Duration</div>
+      <div>Stops</div>
+      <div>Baggage</div>
+      <div>Price (PKR)</div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results-body">
+      <div class="empty-state">
+        <div class="empty-icon">✈</div>
+        <div class="empty-title">Search flights worldwide</div>
+        <div class="empty-desc">
+          Type any city above — Pakistan, UAE, Saudi Arabia, UK, USA or anywhere in the world.<br>
+          Works for all route types: PK → International, International → PK, and International → International.
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER STATS -->
+    <div class="foot" id="foot" style="display:none;">
+      <div class="fstat">Flights found: <span id="f-count">0</span></div>
+      <div class="fstat">Cheapest: <span id="f-cheap">—</span></div>
+      <div class="fstat">Route: <span id="f-route">—</span></div>
+      <div class="fstat">Type: <span id="f-type">—</span></div>
+      <div class="fstat" style="margin-left:auto;">
+        <span class="api-status">● Live API: Not connected</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/airports.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
